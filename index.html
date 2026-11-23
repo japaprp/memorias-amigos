@@ -56,6 +56,7 @@ body{
 
 .foto{
   width:100%;
+  height:auto;
   margin:30px 0;
   border-radius:14px;
   box-shadow:0 10px 25px rgba(0,0,0,.15);
@@ -71,7 +72,11 @@ body{
   margin:40px 0 10px;
 }
 
-.share a{
+.share a,.share button{
+  font:inherit;
+  border:0;
+  cursor:pointer;
+  text-align:center;
   text-decoration:none;
   padding:12px 22px;
   border-radius:30px;
@@ -80,11 +85,19 @@ body{
   transition:.3s;
 }
 
-.whatsapp{background:#25D366}
-.facebook{background:#1877F2}
-.instagram{background:#E1306C}
+.whatsapp{background:#187039}
+.facebook{background:#185cb3}
+.instagram{background:#a72251}
 
-.share a:hover{opacity:.85;transform:scale(1.05)}
+.share :is(a,button):hover{transform:scale(1.05)}
+.share :is(a,button):focus-visible{outline:3px solid #173450;outline-offset:3px}
+.share-status{text-align:center;color:#294661}
+
+@media(prefers-reduced-motion:reduce){
+  .blog{animation:none}
+  .share :is(a,button){transition:none}
+  .share :is(a,button):hover{transform:none}
+}
 
 @media(max-width:600px){
   .header h1{font-size:30px}
@@ -111,14 +124,14 @@ body{
       Mesmo assim, aquilo que vivemos juntos nunca se perdeu.
     </p>
 
-    <img src="amigos.jpg" class="foto">
+    <img src="amigos.jpg" class="foto" alt="Foto dos amigos reunidos" width="1280" height="960">
 
     <p>
       Aquela foto cheia de sorrisos não é só uma imagem — é um pedaço da nossa história.
       Ela guarda uma época em que tudo era simples: amizade, conversa fiada, zoeira, planos e esperança.
     </p>
 
-    <img src="amigos1.jpg" class="foto">
+    <img src="amigos1.jpg" class="foto" alt="Outra lembrança do grupo de amigos" width="1280" height="960" loading="lazy">
 
     <p>
       E entre nós havia um amigo especial… daqueles que marcam a vida da gente.
@@ -132,16 +145,35 @@ body{
 
     <p><strong>Para sempre, irmãos. Para sempre, amigos.</strong> 🤍</p>
 
-    <!-- BOTÕES DE COMPARTILHAR -->
-    <div class="share">
-      <a class="whatsapp" href="https://wa.me/?text=Veja%20essa%20homenagem%20aos%20meus%20amigos:%20" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank">WhatsApp</a>
-      <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank">Facebook</a>
-      <a class="instagram" href="#" onclick="navigator.clipboard.writeText(window.location.href); alert('Link copiado! Cole no Instagram.'); return false;">Instagram</a>
+    <div class="share" role="group" aria-label="Compartilhar homenagem">
+      <a class="whatsapp" id="share-whatsapp" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      <a class="facebook" id="share-facebook" target="_blank" rel="noopener noreferrer">Facebook</a>
+      <button class="instagram" id="copy-link" type="button">Copiar link</button>
     </div>
+    <div class="share-status" id="share-status" role="status"></div>
 
   </div>
 
 </div>
 
+<script>
+const pageUrl = new URL(window.location.href);
+pageUrl.hash = '';
+const encodedUrl = encodeURIComponent(pageUrl.href);
+const message = encodeURIComponent('Veja essa homenagem aos meus amigos: ' + pageUrl.href);
+document.getElementById('share-whatsapp').href = 'https://wa.me/?text=' + message;
+document.getElementById('share-facebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl;
+
+document.getElementById('copy-link').addEventListener('click', async () => {
+  const status = document.getElementById('share-status');
+  status.textContent = '';
+  try {
+    await navigator.clipboard.writeText(pageUrl.href);
+    status.textContent = 'Link copiado.';
+  } catch {
+    window.prompt('Copie o link da homenagem:', pageUrl.href);
+  }
+});
+</script>
 </body>
 </html>
